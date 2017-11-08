@@ -277,19 +277,23 @@ public class JDBCSchemaReader extends AbstractCachedSchemaReader
 					// auto increment)
 					ResultsColumns additionalInfo = null;
 					Statement stmt = null;
+
+					// get if in table name, quotation required or not.
+					String fullTableName = getQuotedValue(table.getName());
+					if (schema.getName() != null) {
+						fullTableName = getQuotedValue(schema.getName()) + "." + fullTableName;
+					}
+
 					try {
 						stmt = connection.createStatement();
-						// get if in table name, quotation required or not.
-						String fullTableName = getQuotedValue(table.getName());
-						if (schema.getName() != null) {
-							fullTableName = getQuotedValue(schema.getName()) + "." + fullTableName;
-						}
 						ResultSet rs = stmt
 								.executeQuery("SELECT * FROM " + fullTableName + " WHERE 1 = 0");
 						additionalInfo = SchemaCrawlerUtility.getResultColumns(rs);
 					} catch (SQLException sqle) {
 						reporter.warn(new IOMessageImpl(
-								"Couldn't retrieve additional column meta data.", sqle));
+								"Couldn't retrieve additional column metadata for table "
+										+ fullTableName,
+								sqle));
 					} finally {
 						if (stmt != null)
 							try {
