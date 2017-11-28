@@ -7,6 +7,11 @@ See the [change log guidelines](http://keepachangelog.com/) for information on h
 ### Fixed
 
 - Fixed hale connect login on Welcome Page to work for user names and passwords w/ special characters
+- Fixed initialization of hale connect base paths 
+
+### Changed
+
+- Updated default hale connect endpoints to match new pattern
 
 ## [3.3.1]
 
