@@ -19,5 +19,5 @@ jobs:
     
     steps:
       - checkout
-      - run: mkdir -p ~/.gradle && echo "org.gradle.daemon=false" >> ~/.gradle/gradle.properties && ./build.sh commitStage
+      - run: ./build-ci.sh commitStage
       
