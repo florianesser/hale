@@ -12,6 +12,8 @@ jobs:
 
     working_directory: ~/repo
 
+    resource_class: large
+
     environment:
       # Customize the JVM maximum heap limit
       JVM_OPTS: -Xmx8g
