@@ -2,3 +2,6 @@
 language: java
 jdk: oraclejdk8
 script: ./build-ci.sh commitStage
+env:
+  global:
+    - _JAVA_OPTIONS: -Xmx4g
