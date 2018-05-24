@@ -1,7 +1,12 @@
 ---
 language: java
 jdk: oraclejdk8
-script: travis_wait 60 ./build-ci.sh commitStage
+script:
+# Output something every miute lest Travis kills the job
+  - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+  - ./build-ci.sh commitStage
+# Killing background sleep loop
+  - kill %1
 env:
   global:
     - _JAVA_OPTIONS: -Xmx4g
