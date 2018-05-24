@@ -266,7 +266,7 @@ def configureEnvironment() {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.10'
+    gradleVersion = '4.7'
 }
 
 task cli {
