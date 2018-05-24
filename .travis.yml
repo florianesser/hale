@@ -9,4 +9,4 @@ script:
   - kill %1
 env:
   global:
-    - _JAVA_OPTIONS: -Xmx4g
+    - _JAVA_OPTIONS: -Xmx6g
