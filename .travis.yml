@@ -6,7 +6,7 @@ dist: trusty
 script:
 # Output something every miute lest Travis kills the job
   - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-  - ./build.sh commitStage
+  - HALE_GRADLE_CONSOLE=plain ./build.sh commitStage
 # Killing background sleep loop
   - kill %1
 env:
