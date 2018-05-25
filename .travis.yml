@@ -3,12 +3,57 @@ language: java
 jdk: oraclejdk8
 sudo: required
 dist: trusty
-script:
-# Output something every miute lest Travis kills the job
-  - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-  - HALE_GRADLE_CONSOLE=plain ./build.sh commitStage
-# Killing background sleep loop
-  - kill %1
+stages:
+  - test
+  - name: integrationtest
+  - name: build
+    if: branch = master
 env:
   global:
     - _JAVA_OPTIONS: -Xmx6g
+jobs:
+  include:
+    - stage: test
+      if: type = pull_request
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh commitStage
+        # Killing background sleep loop
+        - kill %1
+    - stage: test
+      if: branch = master
+      script:
+        # Output something every miute lest Travis kills the job
+        #- while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        #- HALE_GRADLE_CONSOLE=plain ./build.sh integrationStage
+        # Killing background sleep loop
+        #- kill %1
+        - echo "./build.sh integrationStage"
+    - stage: build
+      env:
+        - PLATFORM=macosx
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        # Killing background sleep loop
+        - kill %1
+    - stage: build
+      env:
+        - PLATFORM=linux
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        # Killing background sleep loop
+        - kill %1
+    - stage: build
+      env:
+        - PLATFORM=windows
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        # Killing background sleep loop
+        - kill %1
