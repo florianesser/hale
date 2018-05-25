@@ -5,7 +5,6 @@ sudo: required
 dist: trusty
 stages:
   - test
-  - name: integrationtest
   - name: build
     if: branch = master
 env:
@@ -15,33 +14,31 @@ jobs:
   include:
     - stage: test
       if: type = pull_request
+      env:
+        - STAGE = commitStage
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - HALE_GRADLE_CONSOLE=plain ./build.sh commitStage
+        - HALE_GRADLE_CONSOLE=plain ./build.sh $STAGE
         # Killing background sleep loop
         - kill %1
     - stage: test
       if: branch = master
+      env:
+        - STAGE = integrationStage
       script:
         # Output something every miute lest Travis kills the job
         #- while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         #- HALE_GRADLE_CONSOLE=plain ./build.sh integrationStage
         # Killing background sleep loop
         #- kill %1
-        - echo "./build.sh integrationStage"
+        - echo "./build.sh $STAGE"
     - stage: build
       env:
         - PLATFORM=macosx
-      script:
-        # Output something every miute lest Travis kills the job
-        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
-        # Killing background sleep loop
-        - kill %1
-    - stage: build
-      env:
-        - PLATFORM=linux
+      before_install:
+        - sudo apt -qq update
+        - sudo apt install -y genisoimage
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
@@ -55,5 +52,21 @@ jobs:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        # Killing background sleep loop
+        - kill %1
+    - stage: build
+      env:
+        - PLATFORM=linux
+      before_install:
+        - sudo apt -qq update
+        - sudo apt install -y python python-pip
+      install:
+        - sudo pip install awscli
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        - cd build && ./upload-site.sh
+        - HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
         # Killing background sleep loop
         - kill %1
