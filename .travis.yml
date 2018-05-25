@@ -3,10 +3,19 @@ language: java
 jdk: oraclejdk8
 sudo: required
 dist: trusty
+services:
+  - docker
+addons:
+  apt:
+    update: true
+    packages:
+      - python
+      - python-pip
+      - docker-ce
 stages:
   - test
   - name: build
-    if: branch = master
+    if: branch = master || branch = release
 env:
   global:
     - _JAVA_OPTIONS: -Xmx6g
@@ -35,38 +44,49 @@ jobs:
         - echo "./build.sh $STAGE"
     - stage: build
       env:
-        - PLATFORM=macosx
+        - PLATFORM=macosx PRODUCT=HALE
       before_install:
         - sudo apt -qq update
         - sudo apt install -y genisoimage
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
         # Killing background sleep loop
         - kill %1
     - stage: build
       env:
-        - PLATFORM=windows
+        - PLATFORM=windows PRODUCT=HALE
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
         # Killing background sleep loop
         - kill %1
     - stage: build
       env:
-        - PLATFORM=linux
-      before_install:
-        - sudo apt -qq update
-        - sudo apt install -y python python-pip
+        - PLATFORM=linux PRODUCT=HALE
       install:
-        - sudo pip install awscli
+        - sudo pip install --upgrade pip
+        - sudo pip install --progress-bar off awscli
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM HALE
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
         - cd build && ./upload-site.sh
         - HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
+        # Killing background sleep loop
+        - kill %1
+    - stage: build
+      if: branch = master # should be 'branch = release'!
+      env:
+        - PLATFORM=linux PRODUCT=Infocenter
+      install:
+        - sudo pip install --upgrade pip
+        - sudo pip install --progress-bar off awscli
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM --publish --latest $PRODUCT
         # Killing background sleep loop
         - kill %1
