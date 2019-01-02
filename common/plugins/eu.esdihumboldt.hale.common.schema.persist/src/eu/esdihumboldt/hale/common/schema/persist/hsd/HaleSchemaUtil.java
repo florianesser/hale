@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import eu.esdihumboldt.hale.common.core.io.report.IOReporter;
 import eu.esdihumboldt.hale.common.schema.model.Schema;
+import eu.esdihumboldt.hale.common.schema.model.TypeDefinition;
 import eu.esdihumboldt.hale.common.schema.model.impl.DefaultSchema;
 
 /**
@@ -61,15 +62,22 @@ public abstract class HaleSchemaUtil {
 
 			schemas.forEach(schema -> {
 				schema.getTypes().forEach(type -> {
-					if (reporter != null) {
-						// check if type is already there
-						QName name = type.getName();
-						if (result.getType(name) != null) {
-							reporter.error(
-									MessageFormat.format("Multiple definitions of type {0}", name));
+					// check if type is already there
+					QName name = type.getName();
+					TypeDefinition typeDef = result.getType(name);
+					if (result.getType(name) != null) {
+						// Check if definition can be reused
+						if (!typeDef.equals(type)) {
+							if (reporter != null) {
+								reporter.error(MessageFormat
+										.format("Multiple definitions of type {0}", name));
+							}
 						}
+
 					}
-					result.addType(type);
+					else {
+						result.addType(type);
+					}
 				});
 			});
 
