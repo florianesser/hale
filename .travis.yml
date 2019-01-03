@@ -39,11 +39,10 @@ jobs:
         - STAGE = integrationStage
       script:
         # Output something every miute lest Travis kills the job
-        #- while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        #- HALE_GRADLE_CONSOLE=plain ./build.sh integrationStage
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh $STAGE
         # Killing background sleep loop
-        #- kill %1
-        - echo "./build.sh $STAGE"
+        - kill %1
     - stage: build
       env:
         - PLATFORM=macosx PRODUCT=HALE
