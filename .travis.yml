@@ -77,13 +77,13 @@ jobs:
           paths:
           - $(ls *.tar.gz | tr "\n" ":")
           target_paths:
-          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
+          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
           debug: true
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
-        - cd build && ./upload-site.sh
+        #- cd build && ./upload-site.sh
         #- HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
         - 
         # Killing background sleep loop
