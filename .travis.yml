@@ -43,27 +43,45 @@ jobs:
 #        - HALE_GRADLE_CONSOLE=plain ./build.sh $STAGE
 #        # Killing background sleep loop
 #        - kill %1
-#    - stage: build
-#      env:
-#        - PLATFORM=macosx PRODUCT=HALE
-#      before_install:
-#        - sudo apt -qq update
-#        - sudo apt install -y genisoimage
-#      script:
-#        # Output something every miute lest Travis kills the job
-#        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-#        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
-#        # Killing background sleep loop
-#        - kill %1
-#    - stage: build
-#      env:
-#        - PLATFORM=windows PRODUCT=HALE
-#      script:
-#        # Output something every miute lest Travis kills the job
-#        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-#        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
-#        # Killing background sleep loop
-#        - kill %1
+    - stage: build
+      env:
+        - PLATFORM=macosx PRODUCT=HALE
+      before_install:
+        - sudo apt -qq update
+        - sudo apt install -y genisoimage
+      addons:
+        artifacts:
+          #s3_region: "eu-central-1"
+          #working_dir: build/target
+          paths:
+          - $(ls build/target/*macosx.cocoa* | tr "\n" ":")
+          target_paths:
+          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
+          debug: true
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
+        # Killing background sleep loop
+        - kill %1
+    - stage: build
+      env:
+        - PLATFORM=windows PRODUCT=HALE
+      addons:
+        artifacts:
+          #s3_region: "eu-central-1"
+          #working_dir: build/target
+          paths:
+          - $(ls build/target/*win32.win32* | tr "\n" ":")
+          target_paths:
+          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
+          debug: true
+      script:
+        # Output something every miute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
+        - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
+        # Killing background sleep loop
+        - kill %1
     - stage: build
       env:
         - PLATFORM=linux PRODUCT=HALE
@@ -75,7 +93,7 @@ jobs:
           #s3_region: "eu-central-1"
           #working_dir: build/target
           paths:
-          - $(ls build/target/*.tar.gz | tr "\n" ":")
+          - $(ls build/target/*linux.gtk* | tr "\n" ":")
           target_paths:
           - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
           debug: true
