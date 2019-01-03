@@ -72,10 +72,10 @@ jobs:
 #        - sudo pip install awscli
       addons:
         artifacts:
-          s3_region: "eu-central-1"
-          working_dir: build/target
+          #s3_region: "eu-central-1"
+          #working_dir: build/target
           paths:
-          - $(ls *.tar.gz | tr "\n" ":")
+          - $(ls build/target/*.tar.gz | tr "\n" ":")
           target_paths:
           - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
           debug: true
