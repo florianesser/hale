@@ -67,15 +67,25 @@ jobs:
     - stage: build
       env:
         - PLATFORM=linux PRODUCT=HALE
-      install:
-        - sudo pip install --upgrade --force-reinstall pip==9.0.3
-        - sudo pip install awscli
+#      install:
+#        - sudo pip install --upgrade --force-reinstall pip==9.0.3
+#        - sudo pip install awscli
+      addons:
+        artifacts:
+          s3_region: "eu-central-1"
+          working_dir: build/target
+          paths:
+          - $(ls *.tar.gz | tr "\n" ":")
+          target_paths:
+          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}/${TRAVIS_JOB_NUMBER}
+          debug: true
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         - HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
         - cd build && ./upload-site.sh
-        - HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
+        #- HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
+        - 
         # Killing background sleep loop
         - kill %1
 #    - stage: build
