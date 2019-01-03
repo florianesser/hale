@@ -68,8 +68,8 @@ jobs:
       env:
         - PLATFORM=linux PRODUCT=HALE
       install:
-        - sudo pip install --upgrade pip
-        - sudo pip install --progress-bar off awscli
+        - sudo pip install --upgrade --force-reinstall pip==9.0.3
+        - sudo pip install --disable-pip-version-check --progress-bar off awscli
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
