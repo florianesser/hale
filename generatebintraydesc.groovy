@@ -30,6 +30,7 @@ def generateDescriptor(fileName, options) {
     def patternArtifactVersion = artifactVersion.replace('.', '\\.')    
 
     def today = new Date().format('yyyy-MM-dd')
+    new File('.artifact-version').text = "${artifactVersion}"
     new File(fileName).text = """
 {
     "package": {
