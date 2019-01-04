@@ -17,6 +17,9 @@ stages:
   - name: build
     if: branch = master || branch = release
 env:
+  matrix:
+    - PLATFORM=linux PRODUCT=HALE ARCH=x86
+    - PLATFORM=linux PRODUCT=HALE ARCH=x86_64
   global:
     - _JAVA_OPTIONS: -Xmx6g
     - TERM: dumb
@@ -86,9 +89,9 @@ jobs:
 #        # Killing background sleep loop
 #        - kill %1
     - stage: build
-      env:
-        - PLATFORM=linux PRODUCT=HALE ARCH=x86
-        - PLATFORM=linux PRODUCT=HALE ARCH=86_64
+#      env:
+#        - PLATFORM=linux PRODUCT=HALE ARCH=x86
+#        - PLATFORM=linux PRODUCT=HALE ARCH=86_64
       before_deploy:
         - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
         - echo "Deploying version $(<.version) to Bintray ${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
