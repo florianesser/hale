@@ -20,6 +20,7 @@ env:
   global:
     - _JAVA_OPTIONS=-Xmx6g
     - TERM=dumb
+    - HALE_GRADLE_CONSOLE=plain
     - BINTRAY_PACKAGE=hale-dev  # TODO Make value depend on branch (master -> hale-dev, release -> hale)
 
 jobs:
@@ -30,7 +31,7 @@ jobs:
         - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
       before_deploy:
         - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
-        - echo "Deploying version $(<.version) to Bintray ${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
+        - echo "Deploying version $(<.version) to Bintray ${BINTRAY_USER}/${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
       deploy:
         skip_cleanup: true
         provider: bintray
@@ -47,9 +48,10 @@ jobs:
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        - mkdir -p build/target
-        - echo "3.5.0-SNAPSHOT" > build/.version.txt
-        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
+        #- mkdir -p build/target
+        #- echo "3.5.0-SNAPSHOT" > build/.version.txt
+        #- echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
+        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
