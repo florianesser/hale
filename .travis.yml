@@ -27,7 +27,7 @@ jobs:
     - &build-hs 
       stage: build
       env:
-        - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86 EXT=tar.gz
+        - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
       before_deploy:
         - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
         - echo "Deploying version $(<.version) to Bintray ${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
@@ -54,16 +54,22 @@ jobs:
         - kill %1
     - <<: *build-hs
       env:
-        - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
-    - <<: *build-hs
-      env:
-        - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86 EXT=tar.gz
+        - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86_64 EXT=zip
     - <<: *build-hs
       env:
         - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
+      before_install:
+        - sudo apt -qq update
+        - sudo apt install -y genisoimage    
+    - <<: *build-hs
+      env:
+        - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86 EXT=tar.gz
     - <<: *build-hs
       env:
         - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86 EXT=zip
     - <<: *build-hs
       env:
-        - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86_64 EXT=zip
+        - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86 EXT=tar.gz
+      before_install:
+        - sudo apt -qq update
+        - sudo apt install -y genisoimage    
