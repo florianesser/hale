@@ -41,7 +41,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/hale-studio-${projectVersion}-(${options.platform}.${options.arch}).(.*)", "uploadPattern": "/hale-studio-${version}-\$1.\$2" }
+        { "includePattern": "build/target/hale-studio-${projectVersion}.(.*)", "uploadPattern": "/hale-studio-${version}-\$1" }
     ],
 
     "publish": true
@@ -67,7 +67,7 @@ cli.with {
 
 def options = cli.parse(args)
 
-if (options?.p && options?.r && options?.s && options?.platform && options?.arch) {
+if (options?.p && options?.r && options?.s) {
     def descFileName = options.filename ?: '.bintray.json'
     generateDescriptor(descFileName, options)
     return

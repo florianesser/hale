@@ -84,7 +84,7 @@ jobs:
 #        - kill %1
     - stage: build
       env:
-        - PLATFORM=linux PRODUCT=HALE ARCH=x86_64
+        - PLATFORM=linux ARCH=x86_64 PRODUCT=HALE
 #      install:
 #        - sudo pip install --upgrade --force-reinstall pip==9.0.3
 #        - sudo pip install awscli
@@ -98,7 +98,7 @@ jobs:
 #          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
 #          debug: true
       before_deploy:
-        - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} --platform ${PLATFORM} --arch ${ARCH} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
+        - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
       deploy:
         skip_cleanup: true
         provider: bintray
