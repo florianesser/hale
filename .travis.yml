@@ -102,7 +102,7 @@ jobs:
       deploy:
         skip_cleanup: true
         provider: bintray
-        file: .bintray-descriptor.json
+        file: .bintray.json
         user: ${BINTRAY_USER}
         key: ${BINTRAY_KEY}        
       script:
