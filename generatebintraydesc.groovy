@@ -20,7 +20,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "target/build/(.*linux.*)", "uploadPattern": "/\$1" }
+        { "includePattern": "build/target/(.*linux.*)", "uploadPattern": "/\$1" }
     ],
 
     "publish": true
