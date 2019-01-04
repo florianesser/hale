@@ -49,10 +49,12 @@ def generateDescriptor(fileName, options) {
         { 
           "includePattern": "build/target/(.*)-(${patternArtifactVersion})-(.*)", 
           "uploadPattern": "/\$1-${patternVersion}-\$3",
-          "list_in_downloads": true,
           "matrixParams": {
-              "override": 1
-          }
+              "override": 1,
+              "publish": 1,
+              "list_in_downloads": 1
+          },
+          "list_in_downloads": true
         }
     ],
 
