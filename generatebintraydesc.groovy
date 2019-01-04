@@ -22,7 +22,7 @@ def generateDescriptor(fileName, options) {
         // SNAPSHOT versions can't be uploaded to Bintray, so replace with branch-build#
         assert options.buildNumber : 'SNAPSHOT version, buildNumber required'
         assert options.branch : 'SNAPSHOT version, branch required'
-        version = version.replace('-SNAPSHOT', ".${options.buildNumber}-${options.branch}")
+        version = version.replace('-SNAPSHOT', ".b${options.buildNumber}-${options.branch}")
         artifactVersion = artifactVersion.replace('-SNAPSHOT', '.SNAPSHOT')
     }
 
@@ -46,9 +46,12 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/(.*)-(${patternArtifactVersion})-(.*)", "uploadPattern": "/\$1-${patternVersion}-\$3", "list_in_downloads": true,
+        { 
+          "includePattern": "build/target/(.*)-(${patternArtifactVersion})-(.*)", 
+          "uploadPattern": "/\$1-${patternVersion}-\$3",
+          "list_in_downloads": true,
           "matrixParams": {
-              "publish": 1
+              "override": 1
           }
         }
     ],
