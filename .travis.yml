@@ -105,16 +105,17 @@ jobs:
         user: ${BINTRAY_USER}
         key: ${BINTRAY_KEY}        
       after_deploy:
+        - ARTIFACT_VERSION=$(<.artifact-version); echo $ARTIFACT_VERSION
         - sleep 60
         - |
           ARTIFACT_VERSION=$(<.artifact-version); curl --silent --show-error --fail\
           -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale-master/hale-studio-$ARTIFACT_VERSION-linux.gtk.x86_64.tar.gz
+          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$ARTIFACT_VERSION-linux.gtk.x86_64.tar.gz
         # Test
         - |
           ARTIFACT_VERSION=$(<.artifact-version); curl --silent --show-error --fail\
           -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale-master/hale-studio-$ARTIFACT_VERSION-linux.gtk.x86.tar.gz
+          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$ARTIFACT_VERSION-linux.gtk.x86.tar.gz
 
       script:
         # Output something every miute lest Travis kills the job
