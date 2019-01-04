@@ -46,7 +46,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/(.*)(${patternArtifactVersion})(.*)", "uploadPattern": "/\${1}${patternVersion}\${3}" }
+        { "includePattern": "build/target/(.*)-(${patternArtifactVersion})-(.*)", "uploadPattern": "/\$1-${patternVersion}-\$3" }
     ],
 
     "publish": true
