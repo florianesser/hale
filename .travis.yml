@@ -99,6 +99,8 @@ jobs:
 #          debug: true
       before_deploy:
         - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} -v 3.5.0.${TRAVIS_BUILD_NUMBER} && cat .bintray.json
+        - mkdir -p build/target
+        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86_64.tar.gz
       deploy:
         skip_cleanup: true
         provider: bintray
@@ -109,8 +111,6 @@ jobs:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         #- HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o $PLATFORM $PRODUCT
-        - mkdir -p build/target
-        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86_64.tar.gz
         #- cd build && ./upload-site.sh
         #- HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
         - 
