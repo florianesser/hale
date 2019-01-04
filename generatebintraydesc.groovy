@@ -3,17 +3,20 @@
 import java.io.File
 
 def generateDescriptor(fileName, options) {
-    def version
+    def projectVersion
     if (!options.v) {
         // read from build/.version.txt
         def versionFile = new File('build/.version.txt')
-        version = versionFile.exists() ? versionFile.text : ''
-        version = version.replace('\r', '').replace('\n', '')
+        projectVersion = versionFile.exists() ? versionFile.text : ''
+        projectVersion = projectVersion.replace('\r', '').replace('\n', '')
     }
     else {
-        version = options.v
+        projectVersion = options.v
     }
+
+    assert projectVersion : 'Version could not be determined, please provide on command line'
     
+    def version = projectVersion
     if (version.contains('-SNAPSHOT')) {
         // SNAPSHOT versions can't be uploaded to Bintray, so replace with branch-build#
         assert options.buildNumber : 'SNAPSHOT version, buildNumber required'
@@ -21,8 +24,6 @@ def generateDescriptor(fileName, options) {
         version = version.replace('-SNAPSHOT', ".${options.buildNumber}-${options.branch}")
     }
 
-    assert version : 'Version could not be determined, please provide on command line'
-    
     def today = new Date().format('yyyy-MM-dd')
     new File(fileName).text = """
 {
@@ -40,7 +41,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/(.*${options.a}.*)", "uploadPattern": "/\$1" }
+        { "includePattern": "build/target/hale-studio-${projectVersion}-(${options.platform}.${options.arch}).(.*)", "uploadPattern": "/hale-studio-${version}-\$1.\$2" }
     ],
 
     "publish": true
@@ -55,7 +56,8 @@ cli.with {
     s longOpt: 'subject', args: 1, 'Bintray subject (org or user) [required]'
     v longOpt: 'version', args: 1, 'Version name (e.g. 0.5), read from build/.version.txt if omitted'
     d longOpt: 'desc', args: 1, 'Version description'
-    a longOpt: 'arch', args: 1, 'Architecture (e.g. linux or macosx), used for finding build artifacts'
+    _ longOpt: 'platform', args: 1, 'Platform (e.g. linux.gtk or macosx.macosx), used for finding build artifacts'
+    _ longOpt: 'arch', args: 1, 'Architecture (x86 or x86_64)'
     _ longOpt: 'date', args: 1, 'Version release date (e.g. 2019-01-01)'
     _ longOpt: 'filename', args: 1, 'Bintray descriptor file name (default: .bintray.json)'
     _ longOpt: 'uploadPattern', args: 1, 'Upload pattern for Bintray'
@@ -65,7 +67,7 @@ cli.with {
 
 def options = cli.parse(args)
 
-if (options?.p && options?.r && options?.s && options?.a) {
+if (options?.p && options?.r && options?.s && options?.platform && options?.arch) {
     def descFileName = options.filename ?: '.bintray.json'
     generateDescriptor(descFileName, options)
     return
