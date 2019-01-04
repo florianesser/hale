@@ -4,3 +4,4 @@ caches/
 target/
 temp/
 /tmp-update-site/
+/.version.txt
