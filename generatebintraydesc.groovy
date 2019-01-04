@@ -18,12 +18,12 @@ def generateDescriptor(fileName, options) {
         "gpgSign": false
     },
     
-    "files:" {
-        [
-            { "includePattern": "target/build/(.*linux.*)", "uploadPattern": "/\$1" }
-        ],
-        "publish": true
-    }
+    "files":
+    [
+        { "includePattern": "target/build/(.*linux.*)", "uploadPattern": "/\$1" }
+    ],
+
+    "publish": true
 } 
 """
 }
