@@ -84,7 +84,7 @@ jobs:
 #        - kill %1
     - stage: build
       env:
-        - PLATFORM=linux ARCH=x86_64 PRODUCT=HALE
+        - PLATFORM=linux PRODUCT=HALE
 #      install:
 #        - sudo pip install --upgrade --force-reinstall pip==9.0.3
 #        - sudo pip install awscli
@@ -114,6 +114,7 @@ jobs:
         - mkdir -p build/target
         - echo "3.5.0-SNAPSHOT" > build/.version.txt
         - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86_64.tar.gz
+        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86.tar.gz
         # Killing background sleep loop
         - kill %1
 #    - stage: build
