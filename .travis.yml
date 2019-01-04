@@ -98,7 +98,7 @@ jobs:
 #          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
 #          debug: true
       before_deploy:
-        - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} -v 3.5.0.${TRAVIS_BUILD_NUMBER} && cat .bintray.json
+        - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} -v 3.5.0.${TRAVIS_BUILD_NUMBER}-${TRAVIS_BRANCH} && cat .bintray.json
       deploy:
         skip_cleanup: true
         provider: bintray
