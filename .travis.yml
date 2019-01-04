@@ -20,6 +20,7 @@ env:
   global:
     - _JAVA_OPTIONS: -Xmx6g
     - TERM: dumb
+    - BINTRAY_PACKAGE: hale-dev  # TODO Make value depend on branch (master -> hale-dev, release -> hale)
 jobs:
   include:
 #    - stage: test
@@ -48,15 +49,6 @@ jobs:
 #      before_install:
 #        - sudo apt -qq update
 #        - sudo apt install -y genisoimage
-#      addons:
-#        artifacts:
-#          #s3_region: "eu-central-1"
-#          #working_dir: build/target
-#          paths:
-#          - $(ls build/target/*macosx.cocoa* | tr "\n" ":")
-#          target_paths:
-#          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
-#          debug: true
 #      script:
 #        # Output something every miute lest Travis kills the job
 #        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
@@ -66,15 +58,27 @@ jobs:
 #    - stage: build
 #      env:
 #        - PLATFORM=windows PRODUCT=HALE
-#      addons:
-#        artifacts:
-#          #s3_region: "eu-central-1"
-#          #working_dir: build/target
-#          paths:
-#          - $(ls build/target/*win32.win32* | tr "\n" ":")
-#          target_paths:
-#          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
-#          debug: true
+#      before_deploy:
+#        - ./generatebintraydesc.groovy -p ${BINTRAY_PACKAGE} -r ${BINTRAY_REPO} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
+#        - echo "Deploying version $(<.version) to Bintray ${BINTRACK_REPO}/${BINTRACK_PACKAGE}"
+#      deploy:
+#        skip_cleanup: true
+#        provider: bintray
+#        file: .bintray.json
+#        user: ${BINTRAY_USER}
+#        key: ${BINTRAY_KEY}        
+#      after_deploy:
+#        - sleep 60
+#        - |
+#          BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
+#          -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
+#          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$BUILD_VERSION-linux.gtk.x86_64.tar.gz
+#        # Test
+#        - |
+#          BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
+#          -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
+#          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$BUILD_VERSION-linux.gtk.x86.tar.gz
+#
 #      script:
 #        # Output something every miute lest Travis kills the job
 #        - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
@@ -84,21 +88,9 @@ jobs:
     - stage: build
       env:
         - PLATFORM=linux PRODUCT=HALE
-#      install:
-#        - sudo pip install --upgrade --force-reinstall pip==9.0.3
-#        - sudo pip install awscli
-#      addons:
-#        artifacts:
-#          #s3_region: "eu-central-1"
-#          #working_dir: build/target
-#          paths:
-#          - $(ls build/target/*linux.gtk* | tr "\n" ":")
-#          target_paths:
-#          - /travisci/${TRAVIS_REPO_SLUG}/${TRAVIS_BUILD_NUMBER}
-#          debug: true
       before_deploy:
-        - ./generatebintraydesc.groovy -p hale-master -r hale -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
-        - echo "Deploying version $(<.version) to Bintray"
+        - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
+        - echo "Deploying version $(<.version) to Bintray ${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
       deploy:
         skip_cleanup: true
         provider: bintray
@@ -110,12 +102,12 @@ jobs:
         - |
           BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
           -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$BUILD_VERSION-linux.gtk.x86_64.tar.gz
+          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/${BINTRAY_REPO}/hale-studio-$BUILD_VERSION-linux.gtk.x86_64.tar.gz
         # Test
         - |
           BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
           -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/hale/hale-studio-$BUILD_VERSION-linux.gtk.x86.tar.gz
+          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/${BINTRAY_REPO}/hale-studio-$BUILD_VERSION-linux.gtk.x86.tar.gz
 
       script:
         # Output something every miute lest Travis kills the job
