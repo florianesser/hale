@@ -46,7 +46,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/hale-studio-(.*)-(.*)", "uploadPattern": "/hale-studio-${patternVersion}-\$2" }
+        { "includePattern": "build/target/(.*linux.*)", "uploadPattern": "/\$1" }
     ],
 
     "publish": true
