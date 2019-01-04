@@ -19,8 +19,7 @@ stages:
 env:
   global:
     - _JAVA_OPTIONS: -Xmx6g
-    - WETF_ARTIFACTORY_USER: notarealuser
-    - WETF_ARTIFACTORY_PASSWORD: notarealpassword
+    - TERM: dumb
 jobs:
   include:
 #    - stage: test
