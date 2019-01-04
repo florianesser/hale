@@ -26,6 +26,9 @@ def generateDescriptor(fileName, options) {
         artifactVersion = artifactVersion.replace('-SNAPSHOT', '.SNAPSHOT')
     }
 
+    def patternVersion = version.replace('.', '\\.')
+    def patternArtifactVersion = artifactVersion.replace('.', '\\.')    
+
     def today = new Date().format('yyyy-MM-dd')
     new File(fileName).text = """
 {
@@ -43,7 +46,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/hale-studio-${artifactVersion}-(.*)", "uploadPattern": "/hale-studio-${version}-\$1" }
+        { "includePattern": "build/target/hale-studio-${patternArtifactVersion}-(.*)", "uploadPattern": "/hale-studio-${patternVersion}-\$1" }
     ],
 
     "publish": true
