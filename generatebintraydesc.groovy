@@ -17,11 +17,13 @@ def generateDescriptor(fileName, options) {
     assert projectVersion : 'Version could not be determined, please provide on command line'
     
     def version = projectVersion
+    def artifactVersion = projectVersion
     if (version.contains('-SNAPSHOT')) {
         // SNAPSHOT versions can't be uploaded to Bintray, so replace with branch-build#
         assert options.buildNumber : 'SNAPSHOT version, buildNumber required'
         assert options.branch : 'SNAPSHOT version, branch required'
         version = version.replace('-SNAPSHOT', ".${options.buildNumber}-${options.branch}")
+        artifactVersion = artifactVersion.replace('-SNAPSHOT', '.SNAPSHOT')
     }
 
     def today = new Date().format('yyyy-MM-dd')
@@ -41,7 +43,7 @@ def generateDescriptor(fileName, options) {
     
     "files":
     [
-        { "includePattern": "build/target/hale-studio-${projectVersion}(.*)", "uploadPattern": "/hale-studio-${version}\$1" }
+        { "includePattern": "build/target/hale-studio-${artifactVersion}-(.*)", "uploadPattern": "/hale-studio-${version}-\$1" }
     ],
 
     "publish": true
