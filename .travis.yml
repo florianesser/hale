@@ -87,7 +87,8 @@ jobs:
 #        - kill %1
     - stage: build
       env:
-        - PLATFORM=linux PRODUCT=HALE
+        - PLATFORM=linux PRODUCT=HALE ARCH=x86
+        - PLATFORM=linux PRODUCT=HALE ARCH=86_64
       before_deploy:
         - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
         - echo "Deploying version $(<.version) to Bintray ${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
@@ -102,23 +103,17 @@ jobs:
         - |
           BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
           -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/${BINTRAY_REPO}/hale-studio-$BUILD_VERSION-linux.gtk.x86_64.tar.gz
-        # Test
-        - |
-          BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
-          -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/$BINTRAY_USER/${BINTRAY_REPO}/hale-studio-$BUILD_VERSION-linux.gtk.x86.tar.gz
+          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/${BINTRAY_USER}/${BINTRAY_REPO}/hale-studio-${BUILD_VERSION}-linux.gtk.${ARCH}.tar.gz
 
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        #- HALE_GRADLE_CONSOLE=plain ./build.sh product -a x86_64 -o ${PLATFORM} ${PRODUCT}
+        #- HALE_GRADLE_CONSOLE=plain ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
         #- cd build && ./upload-site.sh
         #- HALE_GRADLE_CONSOLE=plain ./build.sh deployArtifacts
         - mkdir -p build/target
         - echo "3.5.0-SNAPSHOT" > build/.version.txt
-        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86_64.tar.gz
-        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.x86.tar.gz
+        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-linux.gtk.${ARCH}.tar.gz
         # Killing background sleep loop
         - kill %1
 #    - stage: build
