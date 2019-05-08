@@ -46,7 +46,7 @@ jobs:
         secret_access_key: ${AWS_SECRET_KEY}
         bucket: fra.build-artifacts.fesr.net
         region: eu-central-1
-        upload-dir: travisci
+        upload-dir: hale-studio/${TRAVIS_BUILD_NUMBER}
         local_dir: build/target
 #      after_deploy:
 #        - sleep 60
