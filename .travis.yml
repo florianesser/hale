@@ -21,7 +21,7 @@ env:
     - _JAVA_OPTIONS=-Xmx6g
     - TERM=dumb
     - HALE_GRADLE_CONSOLE=plain
-    - BINTRAY_PACKAGE=hale-dev  # TODO Make value depend on branch (master -> hale-dev, release -> hale)
+#    - BINTRAY_PACKAGE=hale-dev  # TODO Make value depend on branch (master -> hale-dev, release -> hale)
 
 jobs:
   include:
@@ -30,28 +30,37 @@ jobs:
       env:
         - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
       before_deploy:
-        - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
-        - echo "Deploying version $(<.version) to Bintray ${BINTRAY_USER}/${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
+#        - ./generatebintraydesc.groovy -r ${BINTRAY_REPO} -p ${BINTRAY_PACKAGE} -s ${BINTRAY_USER} --buildNumber ${TRAVIS_BUILD_NUMBER} --branch ${TRAVIS_BRANCH} && cat .bintray.json
+#        - echo "Deploying version $(<.version) to Bintray ${BINTRAY_USER}/${BINTRAY_REPO}/${BINTRAY_PACKAGE}"
+        - echo "Deploying verion $(<.version) to AWS S3 bucket build-artifacts.wetransform.to"
+#      deploy:
+#        skip_cleanup: true
+#        provider: bintray
+#        file: .bintray.json
+#        user: ${BINTRAY_USER}
+#        key: ${BINTRAY_KEY}        
       deploy:
         skip_cleanup: true
-        provider: bintray
-        file: .bintray.json
-        user: ${BINTRAY_USER}
-        key: ${BINTRAY_KEY}        
-      after_deploy:
-        - sleep 60
-        - |
-          BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
-          -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
-          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/${BINTRAY_USER}/${BINTRAY_REPO}/hale-studio-${BUILD_VERSION}-${PLATFORM2}.${ARCH}.${EXT}
+        provider: s3
+        access_key_id: ${AWS_ACCESS_KEY}
+        secret_access_key: ${AWS_SECRET_KEY}
+        bucket: build-artifacts.wetransform.to
+        upload-dir: travisci
+        local_dir: build/target
+#      after_deploy:
+#        - sleep 60
+#        - |
+#          BUILD_VERSION=$(<.version); curl --silent --show-error --fail\
+#          -X PUT -H "Content-Type: application/json" -d'{"list_in_downloads": true}'\
+#          -u$BINTRAY_USER:$BINTRAY_KEY https://api.bintray.com/file_metadata/${BINTRAY_USER}/${BINTRAY_REPO}/hale-studio-${BUILD_VERSION}-${PLATFORM2}.${ARCH}.${EXT}
 
       script:
         # Output something every miute lest Travis kills the job
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
-        #- mkdir -p build/target
-        #- echo "3.5.0-SNAPSHOT" > build/.version.txt
-        #- echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
-        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
+        - mkdir -p build/target
+        - echo "3.5.0-SNAPSHOT" > build/.version.txt
+        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
+        #- ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
