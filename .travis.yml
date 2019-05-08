@@ -44,7 +44,7 @@ jobs:
         provider: s3
         access_key_id: ${AWS_ACCESS_KEY}
         secret_access_key: ${AWS_SECRET_KEY}
-        bucket: build-artifacts.wetransform.to
+        bucket: fra.build-artifacts.fesr.net
         region: eu-central-1
         upload-dir: travisci
         local_dir: build/target
