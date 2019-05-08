@@ -60,8 +60,8 @@ jobs:
         - while sleep 1m; do echo "=====[ $SECONDS seconds, still running... ]====="; done &
         - mkdir -p build/target
         - echo "3.5.0-SNAPSHOT" > build/.version.txt
-        - echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
-        #- ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
+        #- echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
+        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
