@@ -46,7 +46,7 @@ jobs:
         secret_access_key: ${AWS_SECRET_KEY}
         bucket: ${AWS_S3_BUCKET}
         region: ${AWS_S3_REGION}
-        upload-dir: {AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
+        upload-dir: ${AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
         local_dir: build/target
 #      after_deploy:
 #        - sleep 60
