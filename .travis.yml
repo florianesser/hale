@@ -48,6 +48,7 @@ jobs:
         region: ${AWS_S3_REGION}
         upload-dir: ${AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
         local_dir: build/target
+# TEST
 #      after_deploy:
 #        - sleep 60
 #        - |
@@ -61,28 +62,33 @@ jobs:
         - mkdir -p build/target
         - echo "3.5.0-SNAPSHOT" > build/.version.txt
         #- echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
-        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./build.sh commitAndProductionStage; fi'
+        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./build.sh commitStage; fi'
         - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}; fi'
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
+      if: env(TRAVIS_PULL_REQUEST) = false
       env:
         - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86_64 EXT=zip
     - <<: *build-hs
+      if: env(TRAVIS_PULL_REQUEST) = false
       env:
         - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86_64 EXT=tar.gz
       before_install:
         - sudo apt -qq update
         - sudo apt install -y genisoimage    
     - <<: *build-hs
+      if: env(TRAVIS_PULL_REQUEST) = false
       env:
         - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86 EXT=tar.gz
     - <<: *build-hs
+      if: env(TRAVIS_PULL_REQUEST) = false
       env:
         - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86 EXT=zip
     - <<: *build-hs
+      if: env(TRAVIS_PULL_REQUEST) = false
       env:
         - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86 EXT=tar.gz
       before_install:
         - sudo apt -qq update
-        - sudo apt install -y genisoimage    
+        - sudo apt install -y genisoimage
