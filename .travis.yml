@@ -61,7 +61,8 @@ jobs:
         - mkdir -p build/target
         - echo "3.5.0-SNAPSHOT" > build/.version.txt
         #- echo "test" > build/target/hale-studio-3.5.0.SNAPSHOT-${PLATFORM2}.${ARCH}.${EXT}
-        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}
+        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./build.sh commitAndProductionStage; fi'
+        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./build.sh product -a ${ARCH} -o ${PLATFORM} ${PRODUCT}; fi'
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
