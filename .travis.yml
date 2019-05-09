@@ -48,6 +48,7 @@ jobs:
         region: ${AWS_S3_REGION}
         upload-dir: ${AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
         local_dir: build/target
+# TEST
 #      after_deploy:
 #        - sleep 60
 #        - |
