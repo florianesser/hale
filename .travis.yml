@@ -67,7 +67,7 @@ jobs:
         # Killing background sleep loop
         - kill %1
     - <<: *build-hs
-      if: env(TRAVIS_PULL_REQUEST) = false
+      if: branch = master
       env:
         - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86_64 EXT=zip
     - <<: *build-hs
@@ -78,15 +78,15 @@ jobs:
         - sudo apt -qq update
         - sudo apt install -y genisoimage    
     - <<: *build-hs
-      if: env(TRAVIS_PULL_REQUEST) = false
+      if: branch = master
       env:
         - PLATFORM=linux PLATFORM2=linux.gtk PRODUCT=HALE ARCH=x86 EXT=tar.gz
     - <<: *build-hs
-      if: env(TRAVIS_PULL_REQUEST) = false
+      if: branch = master
       env:
         - PLATFORM=windows PLATFORM2=win32.win32 PRODUCT=HALE ARCH=x86 EXT=zip
     - <<: *build-hs
-      if: env(TRAVIS_PULL_REQUEST) = false
+      if: branch = master
       env:
         - PLATFORM=macosx PLATFORM2=macosx.macosx PRODUCT=HALE ARCH=x86 EXT=tar.gz
       before_install:
