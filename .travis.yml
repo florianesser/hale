@@ -67,26 +67,26 @@ jobs:
 #        - ./build.sh integrationStage
 #        # Killing background sleep loop
 #        - kill %1
-#    - &build-hs 
-#      stage: build
-#      env:
-#        - PLATFORM=linux PRODUCT=HALE ARCH=x86_64
-#      deploy:
-#        skip_cleanup: true
-#        provider: s3
-#        access_key_id: ${AWS_ACCESS_KEY_ID}
-#        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-#        bucket: ${AWS_S3_BUCKET}
-#        region: ${AWS_S3_REGION}
-#        upload-dir: ${AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
-#        local_dir: build/target
-#      script:
-#        # Output something every minute lest Travis kills the job
-#        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
-#        - mkdir -p build/target
-#        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${ADDITIONAL_FLAGS} ${PRODUCT}
-#        # Killing background sleep loop
-#        - kill %1
+    - &build-hs 
+      stage: build
+      env:
+        - PLATFORM=linux PRODUCT=HALE ARCH=x86_64
+      deploy:
+        skip_cleanup: true
+        provider: s3
+        access_key_id: ${AWS_ACCESS_KEY_ID}
+        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+        bucket: ${AWS_S3_BUCKET}
+        region: ${AWS_S3_REGION}
+        upload-dir: ${AWS_S3_BUCKET_TARGET_PATH}/${TRAVIS_BUILD_NUMBER}
+        local_dir: build/target
+      script:
+        # Output something every minute lest Travis kills the job
+        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
+        - mkdir -p build/target
+        - ./build.sh product -a ${ARCH} -o ${PLATFORM} ${ADDITIONAL_FLAGS} ${PRODUCT}
+        # Killing background sleep loop
+        - kill %1
 #    - <<: *build-hs
 #      env:
 #        - PLATFORM=windows PRODUCT=HALE ARCH=x86_64
