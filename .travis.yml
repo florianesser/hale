@@ -106,4 +106,7 @@ jobs:
       before_install:
         - pip install awscli
       script:
-        - cd build && time ./upload-site.sh && time ./build.sh deployArtifacts
+        - cd build && time ./upload-site.sh
+    - stage: deploy
+      script:
+        - cd build && time ./build.sh deployArtifacts
