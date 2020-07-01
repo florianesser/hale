@@ -44,30 +44,30 @@ notifications:
     on_failure: always
 jobs:
   include:
-    - stage: commit
-      script:
-        # Output something every minute lest Travis kills the job
-        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
-        - ./build.sh commitStage
-        # Killing background sleep loop
-        - kill %1
-    - stage: integration
-      script:
-        # Output something every minute lest Travis kills the job
-        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
-        # Make Docker daemon listen on TCP port 2375 for container-based integration tests
-        - 'export DOCKER_SYSTEMD_CONFIG="[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375"'
-        - sudo mkdir -p /etc/systemd/system/docker.service.d
-        - echo -e $DOCKER_SYSTEMD_CONFIG | sudo tee /etc/systemd/system/docker.service.d/override.conf > /dev/null
-        - sudo systemctl daemon-reload
-        - sudo service docker restart
-        - sleep 10
-        - sudo systemctl status docker.service
-        # Pull Docker images required for integration tests
-        - docker pull kartoza/postgis
-        - ./build.sh integrationStage
-        # Killing background sleep loop
-        - kill %1
+#    - stage: commit
+#      script:
+#        # Output something every minute lest Travis kills the job
+#        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
+#        - ./build.sh commitStage
+#        # Killing background sleep loop
+#        - kill %1
+#    - stage: integration
+#      script:
+#        # Output something every minute lest Travis kills the job
+#        - while sleep 1m; do echo "=====[ still running after $SECONDS seconds... ]====="; done &
+#        # Make Docker daemon listen on TCP port 2375 for container-based integration tests
+#        - 'export DOCKER_SYSTEMD_CONFIG="[Service]\nExecStart=\nExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375"'
+#        - sudo mkdir -p /etc/systemd/system/docker.service.d
+#        - echo -e $DOCKER_SYSTEMD_CONFIG | sudo tee /etc/systemd/system/docker.service.d/override.conf > /dev/null
+#        - sudo systemctl daemon-reload
+#        - sudo service docker restart
+#        - sleep 10
+#        - sudo systemctl status docker.service
+#        # Pull Docker images required for integration tests
+#        - docker pull kartoza/postgis
+#        - ./build.sh integrationStage
+#        # Killing background sleep loop
+#        - kill %1
     - &build-hs 
       stage: build
       env:
@@ -107,10 +107,10 @@ jobs:
       if: branch = release
       env:
         - PLATFORM=linux PRODUCT=Infocenter ARCH=x86_64 ADDITIONAL_FLAGS="--publish --latest"
-    - stage: deploy
-      before_install:
-        - pip install awscli
-      script:
-        - cd build && ./upload-site.sh
+#    - stage: deploy
+#      before_install:
+#        - pip install awscli
+#      script:
+#        - cd build && ./upload-site.sh
 #    - stage: deploy
 #        - cd build && ./build.sh deployArtifacts
